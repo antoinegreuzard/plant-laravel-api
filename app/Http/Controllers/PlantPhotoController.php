@@ -4,16 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\PlantPhotoResource;
 use App\Models\Plant;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class PlantPhotoController extends Controller
 {
-    public function index(Plant $plant): AnonymousResourceCollection
+    public function index(Plant $plant): JsonResponse
     {
-        return PlantPhotoResource::collection(
-            $plant->photos()->orderByDesc('uploaded_at')->get()
-        );
+        $photos = $plant->photos()->orderByDesc('uploaded_at')->paginate(10);
+
+        return response()->json([
+            'count' => $photos->count(),
+            'next' => null,
+            'previous' => null,
+            'results' => PlantPhotoResource::collection($photos)->resolve(),
+        ]);
     }
 
     public function store(Request $request, Plant $plant): PlantPhotoResource

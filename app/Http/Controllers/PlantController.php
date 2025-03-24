@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\PlantResource;
 use App\Models\Plant;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
 class PlantController extends Controller
@@ -13,11 +13,16 @@ class PlantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): AnonymousResourceCollection
+    public function index(): JsonResponse
     {
-        return PlantResource::collection(
-            Plant::orderByDesc('created_at')->paginate(5)
-        );
+        $plants = Plant::orderByDesc('created_at')->paginate(10);
+
+        return response()->json([
+            'count' => $plants->total(),
+            'next' => $plants->nextPageUrl(),
+            'previous' => $plants->previousPageUrl(),
+            'results' => PlantResource::collection($plants)->resolve(),
+        ]);
     }
 
     /**
