@@ -2,25 +2,37 @@ services:
     app:
         build:
             context: .
-        ports:
-            - "8000:8000"
+        container_name: plant-laravel
+        volumes:
+            - .:/var/www
         depends_on:
             - db
-        healthcheck:
-            test: [ "CMD", "curl", "-f", "http://localhost:8000/api/health" ]
-            interval: 10s
-            timeout: 5s
-            retries: 10
+        expose:
+            - 9000
         environment:
             APP_ENV: "local"
             APP_DEBUG: "true"
-            APP_KEY: "base64:PLACEHOLDER"
             DB_CONNECTION: "mysql"
             DB_HOST: "db"
             DB_PORT: "3306"
             DB_DATABASE: "plant"
             DB_USERNAME: "laravel"
             DB_PASSWORD: "secret"
+        healthcheck:
+            test: [ "CMD", "curl", "-f", "http://nginx/api/health" ]
+            interval: 10s
+            timeout: 5s
+            retries: 10
+
+    nginx:
+        image: nginx:stable
+        ports:
+            - "8000:80"
+        volumes:
+            - .:/var/www
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - app
 
     db:
         image: mysql:8
