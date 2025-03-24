@@ -19,12 +19,13 @@ services:
             DB_DATABASE: "plant"
             DB_USERNAME: "laravel"
             DB_PASSWORD: "secret"
+            CACHE_DRIVER: "file"
         command: >
             sh -c "
               php artisan config:clear &&
-              php artisan cache:clear &&
               php artisan key:generate &&
               php artisan migrate:fresh --seed &&
+              php artisan cache:clear &&
               php-fpm
             "
         healthcheck:
