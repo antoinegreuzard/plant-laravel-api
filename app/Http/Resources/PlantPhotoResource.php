@@ -18,7 +18,7 @@ class PlantPhotoResource extends JsonResource
         return [
             'id' => $this->id,
             'plant_id' => $this->plant_id,
-            'image_url' => Storage::url($this->image),
+            'image' => url(Storage::url($this->image)),
             'caption' => $this->caption,
             'uploaded_at' => $this->uploaded_at->toIso8601String(),
         ];

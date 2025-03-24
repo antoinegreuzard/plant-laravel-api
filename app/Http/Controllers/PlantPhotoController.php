@@ -13,12 +13,9 @@ class PlantPhotoController extends Controller
     {
         $photos = $plant->photos()->orderByDesc('uploaded_at')->paginate(10);
 
-        return response()->json([
-            'count' => $photos->count(),
-            'next' => null,
-            'previous' => null,
-            'results' => PlantPhotoResource::collection($photos)->resolve(),
-        ]);
+        return response()->json(
+            PlantPhotoResource::collection($photos)->resolve()
+        );
     }
 
     public function store(Request $request, Plant $plant): PlantPhotoResource
