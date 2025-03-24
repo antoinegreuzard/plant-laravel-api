@@ -9,6 +9,8 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 COPY . .
 
+RUN cp .env.example .env
+
 # Assure que le dossier existe avant install
 RUN mkdir -p /var/www/storage && chmod -R 775 /var/www/storage
 
