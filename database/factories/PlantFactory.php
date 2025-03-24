@@ -17,6 +17,11 @@ class PlantFactory extends Factory
      */
     public function definition(): array
     {
+        $lastWatering = fake()->optional()->dateTimeBetween('-2 weeks');
+        $lastFertilizing = fake()->optional()->dateTimeBetween('-2 months');
+        $lastRepotting = fake()->optional()->dateTimeBetween('-2 years');
+        $lastPruning = fake()->optional()->dateTimeBetween('-6 months');
+
         return [
             'name' => fake()->unique()->words(2, true),
             'variety' => fake()->optional()->word(),
@@ -30,10 +35,10 @@ class PlantFactory extends Factory
             'repotting_frequency' => fake()->numberBetween(180, 730),
             'pruning_frequency' => fake()->numberBetween(30, 180),
 
-            'last_watering' => fake()->optional()->dateTimeBetween('-2 weeks', 'now')->format('Y-m-d'),
-            'last_fertilizing' => fake()->optional()->dateTimeBetween('-2 months', 'now')->format('Y-m-d'),
-            'last_repotting' => fake()->optional()->dateTimeBetween('-2 years', 'now')->format('Y-m-d'),
-            'last_pruning' => fake()->optional()->dateTimeBetween('-6 months', 'now')->format('Y-m-d'),
+            'last_watering' => $lastWatering?->format('Y-m-d'),
+            'last_fertilizing' => $lastFertilizing?->format('Y-m-d'),
+            'last_repotting' => $lastRepotting?->format('Y-m-d'),
+            'last_pruning' => $lastPruning?->format('Y-m-d'),
 
             'sunlight_level' => fake()->randomElement(['low', 'medium', 'high']),
             'temperature' => fake()->optional()->randomFloat(1, 10, 35),
