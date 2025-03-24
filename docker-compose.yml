@@ -22,6 +22,7 @@ services:
             CACHE_DRIVER: "file"
         command: >
             sh -c "
+              git config --global --add safe.directory /var/www &&
               composer install &&
               php artisan config:clear &&
               php artisan key:generate &&
