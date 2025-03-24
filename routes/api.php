@@ -23,3 +23,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('plants/{plant}/upload-photo/', [PlantPhotoController::class, 'store'])
         ->name('plant-upload-photo');
 });
+
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok']);
+});
