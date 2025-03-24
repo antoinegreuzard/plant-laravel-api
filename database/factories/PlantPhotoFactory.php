@@ -20,9 +20,9 @@ class PlantPhotoFactory extends Factory
     {
         return [
             'plant_id' => Plant::factory(),
-            'image' => 'plant_photos/'.$this->faker->uuid().'.jpg',
-            'caption' => $this->faker->optional()->sentence(),
-            'uploaded_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'image' => 'plant_photos/'.fake()->uuid().'.jpg',
+            'caption' => fake()->optional()->sentence(),
+            'uploaded_at' => fake()->dateTimeBetween('-1 year', 'now'),
         ];
     }
 }
