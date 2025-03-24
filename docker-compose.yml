@@ -1,18 +1,16 @@
 services:
     app:
+        build:
+            context: .
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost:8000/api/plants" ]
             interval: 10s
             timeout: 5s
             retries: 10
-        build:
-            context: .
-        ports:
-            - "8000:8000"
-        volumes:
-            - .:/var/www
-        depends_on:
-            - db
         environment:
             APP_ENV: "local"
             APP_DEBUG: "true"
@@ -23,17 +21,9 @@ services:
             DB_DATABASE: "plant"
             DB_USERNAME: "laravel"
             DB_PASSWORD: "secret"
-        command: >
-            sh -c "
-              composer install &&
-              php artisan config:clear &&
-              php artisan migrate:fresh --seed &&
-              php artisan serve --host=0.0.0.0 --port=8000
-            "
 
     db:
         image: mysql:8
-        container_name: mysql-plant
         ports:
             - "3307:3306"
         environment:
@@ -43,15 +33,6 @@ services:
             MYSQL_PASSWORD: secret
         volumes:
             - dbdata:/var/lib/mysql
-
-    phpmyadmin:
-        image: phpmyadmin/phpmyadmin
-        restart: always
-        ports:
-            - 8081:80
-        environment:
-            PMA_HOST: db
-            MYSQL_ROOT_PASSWORD: root
 
 volumes:
     dbdata:
