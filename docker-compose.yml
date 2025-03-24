@@ -22,6 +22,7 @@ services:
             CACHE_DRIVER: "file"
         command: >
             sh -c "
+              composer install &&
               php artisan config:clear &&
               php artisan key:generate &&
               php artisan migrate:fresh --seed &&

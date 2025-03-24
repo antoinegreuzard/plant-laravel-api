@@ -1,4 +1,3 @@
-# Dockerfile
 FROM php:8.4-fpm
 
 RUN apt-get update && apt-get install -y \
@@ -11,11 +10,6 @@ WORKDIR /var/www
 COPY . .
 
 RUN cp .env.example .env
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
-
-# Génération du secret JWT (ne touche pas la base)
-RUN php artisan jwt:secret --force
-
 RUN chown -R www-data:www-data /var/www
 
 EXPOSE 9000
