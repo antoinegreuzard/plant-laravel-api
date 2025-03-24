@@ -21,7 +21,7 @@ it('uploads a photo for a plant', function () {
     ]);
 
     $response->assertCreated();
-    $response->assertJsonStructure(['data' => ['image_url']]);
+    $response->assertJsonStructure(['data' => ['image']]);
 
     $imagePath = $response->json('data.image_url');
 
