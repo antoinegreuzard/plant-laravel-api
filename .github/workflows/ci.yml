@@ -1,0 +1,50 @@
+name: Laravel CI
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Cloner le dépôt
+        uses: actions/checkout@v4
+
+      - name: 🧰 Installer PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: mbstring, xml, sqlite3
+          coverage: none
+
+      - name: 🧪 Installer les dépendances PHP
+        run: |
+          composer install --prefer-dist --no-progress --no-suggest
+
+      - name: ⚙️ Copier le fichier .env
+        run: cp .env.example .env
+
+      - name: 🔑 Générer la clé de l'application
+        run: php artisan key:generate
+
+      - name: 🗃️ Créer la base de données SQLite
+        run: |
+          mkdir -p database
+          touch database/database.sqlite
+
+      - name: 🔐 Générer le JWT secret
+        run: php artisan jwt:secret --force
+
+      - name: 🛠 Lancer les migrations avec seed
+        run: php artisan migrate --seed
+
+      - name: ✅ Lancer les tests avec Pest
+        run: php artisan test
