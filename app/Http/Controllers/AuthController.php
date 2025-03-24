@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -16,7 +18,30 @@ class AuthController extends Controller
             return response()->json(['error' => 'Identifiants invalides'], 401);
         }
 
-        return $this->respondWithToken($token);
+        $user = Auth::guard('api')->user();
+
+        $access = $token;
+
+        $refresh = JWTAuth::customClaims([
+            'token_type' => 'refresh'
+        ])->fromUser($user);
+
+        return response()->json([
+            'refresh' => $refresh,
+            'access' => $access,
+        ]);
+    }
+
+    public function refresh(Request $request): JsonResponse
+    {
+        try {
+            $newToken = Auth::guard('api')->refresh();
+            return response()->json([
+                'access' => $newToken,
+            ]);
+        } catch (Exception) {
+            return response()->json(['error' => 'Token invalide ou expiré'], 401);
+        }
     }
 
     protected function respondWithToken($token): JsonResponse
@@ -26,10 +51,5 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
         ]);
-    }
-
-    public function refresh(): JsonResponse
-    {
-        return $this->respondWithToken(Auth::guard('api')->refresh());
     }
 }
