@@ -1,5 +1,10 @@
 services:
     app:
+        healthcheck:
+            test: [ "CMD", "curl", "-f", "http://localhost:8000/api/plants" ]
+            interval: 10s
+            timeout: 5s
+            retries: 10
         build:
             context: .
         container_name: plant-laravel
