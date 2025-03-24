@@ -13,17 +13,7 @@ COPY . .
 RUN cp .env.example .env
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-RUN touch database/database.sqlite
-
-ENV DB_CONNECTION=mysql \
-    DB_HOST=db \
-    DB_PORT=3306 \
-    DB_DATABASE=plant \
-    DB_USERNAME=laravel \
-    DB_PASSWORD=secret
-
-RUN php artisan config:clear && php artisan cache:clear
-RUN php artisan key:generate
+# Génération du secret JWT (ne touche pas la base)
 RUN php artisan jwt:secret --force
 
 RUN chown -R www-data:www-data /var/www
