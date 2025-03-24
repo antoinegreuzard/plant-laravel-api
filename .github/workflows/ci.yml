@@ -40,6 +40,9 @@ jobs:
           mkdir -p database
           touch database/database.sqlite
 
+      - name: 🔐 Générer le JWT secret
+        run: php artisan jwt:secret --force
+
       - name: 🛠 Lancer les migrations avec seed
         run: php artisan migrate --seed
 
