@@ -25,6 +25,7 @@ services:
               cp .env.example .env &&
               git config --global --add safe.directory /var/www &&
               composer install &&
+              until nc -z db 3306; do echo '⏳ Attente de MySQL...'; sleep 2; done &&
               php artisan config:clear &&
               php artisan key:generate &&
               php artisan migrate:fresh --seed &&
