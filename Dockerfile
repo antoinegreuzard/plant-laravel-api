@@ -12,6 +12,9 @@ COPY . .
 
 RUN cp .env.example .env
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
+RUN touch database/database.sqlite
+
 RUN php artisan config:clear && php artisan cache:clear
 RUN php artisan key:generate
 RUN php artisan jwt:secret --force
