@@ -9,7 +9,6 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 COPY . .
 
-RUN cp .env.example .env
 RUN chown -R www-data:www-data /var/www
 
 EXPOSE 9000
