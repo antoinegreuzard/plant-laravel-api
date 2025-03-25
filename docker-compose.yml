@@ -23,6 +23,7 @@ services:
             DB_PASSWORD: secret
         volumes:
             - .:/var/www
+            - /var/www/vendor
         command: [ "php", "artisan", "serve", "--host=0.0.0.0", "--port=8000" ]
 
     db:
