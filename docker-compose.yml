@@ -1,6 +1,16 @@
-version: '3.8'
-
 services:
+    db:
+        image: mysql:8
+        ports:
+            - "3307:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: plant
+            MYSQL_USER: laravel
+            MYSQL_PASSWORD: secret
+        volumes:
+            - dbdata:/var/lib/mysql
+
     app:
         build:
             context: .
@@ -20,45 +30,21 @@ services:
             DB_USERNAME: "laravel"
             DB_PASSWORD: "secret"
             CACHE_DRIVER: "file"
-        command: >
+        entrypoint: >
             sh -c "
               cp .env.example .env &&
               git config --global --add safe.directory /var/www &&
               composer install &&
-              until nc -z db 3306; do echo '⏳ Attente de MySQL...'; sleep 2; done &&
+              until mysql -h db -u laravel -psecret -e 'SELECT 1'; do
+                echo '⏳ Attente de MySQL...';
+                sleep 2;
+              done &&
               php artisan config:clear &&
               php artisan key:generate &&
               php artisan migrate:fresh --seed &&
               php artisan cache:clear &&
               php-fpm
             "
-        healthcheck:
-            test: [ "CMD", "curl", "-f", "http://nginx/api/health" ]
-            interval: 10s
-            timeout: 5s
-            retries: 10
-
-    nginx:
-        image: nginx:stable
-        ports:
-            - "8000:80"
-        volumes:
-            - .:/var/www
-            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-        depends_on:
-            - app
-
-    db:
-        image: mysql:8
-        ports:
-            - "3307:3306"
-        environment:
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: plant
-            MYSQL_USER: laravel
-            MYSQL_PASSWORD: secret
-        volumes:
-            - dbdata:/var/lib/mysql
 
 volumes:
     dbdata:
