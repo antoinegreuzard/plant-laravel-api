@@ -1,6 +1,6 @@
-FROM php:8.4-fpm
+FROM php:8.4-cli
 
-# Installer les dépendances nécessaires
+# Dépendances système
 RUN apt-get update && apt-get install -y \
     zip unzip curl git sqlite3 libsqlite3-dev libzip-dev libonig-dev \
     && docker-php-ext-install pdo pdo_mysql pdo_sqlite zip
@@ -8,15 +8,24 @@ RUN apt-get update && apt-get install -y \
 # Installer Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Préparer l'application
+# Créer et positionner le dossier de travail
 WORKDIR /var/www
+
+# Copier le code source
 COPY . .
 
-# Droits
+# Copier le fichier .env si besoin
+RUN cp .env.example .env && \
+    grep -q '^APP_KEY=' .env || echo 'APP_KEY=' >> .env
+
+# Donner les bons droits
 RUN chown -R www-data:www-data /var/www
 
-# Exposer le port FPM
-EXPOSE 9000
+# Installer les dépendances Laravel
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Commande par défaut
-CMD ["php-fpm"]
+# Donner les permissions à storage & bootstrap
+RUN chmod -R 775 storage bootstrap/cache
+
+# Exposer le port
+EXPOSE 8000
