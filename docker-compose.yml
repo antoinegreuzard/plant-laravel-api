@@ -35,21 +35,6 @@ services:
             interval: 10s
             timeout: 5s
             retries: 10
-        entrypoint: >
-            sh -c "
-              cp .env.example .env &&
-              git config --global --add safe.directory /var/www &&
-              composer install &&
-              until mysql -h db -u laravel -psecret -e 'SELECT 1'; do
-                echo '⏳ Attente de MySQL...';
-                sleep 2;
-              done &&
-              php artisan config:clear &&
-              php artisan key:generate &&
-              php artisan migrate:fresh --seed &&
-              php artisan cache:clear &&
-              php-fpm
-            "
 
 volumes:
     dbdata:
