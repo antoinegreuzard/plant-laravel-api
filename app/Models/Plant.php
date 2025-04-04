@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
@@ -12,6 +13,7 @@ class Plant extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'name', 'variety', 'plant_type', 'purchase_date',
         'location', 'description',
         'watering_frequency', 'fertilizing_frequency',
@@ -29,6 +31,11 @@ class Plant extends Model
         'last_pruning' => 'date',
         'temperature' => 'float',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function photos(): HasMany
     {

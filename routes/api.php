@@ -11,11 +11,11 @@ Route::post('token/refresh/', [AuthController::class, 'refresh'])->name('token_r
 
 Route::middleware('auth:api')->get('/user', fn(Request $request) => $request->user());
 
-Route::get('plants/', [PlantController::class, 'index'])->name('plant-list');
-Route::get('plants/{plant}/', [PlantController::class, 'show'])->name('plant-detail');
-Route::get('plants/{plant}/photos/', [PlantPhotoController::class, 'index'])->name('plant-photos-list');
-
 Route::middleware('auth:api')->group(function () {
+    Route::get('plants/', [PlantController::class, 'index'])->name('plant-list');
+    Route::get('plants/{plant}/', [PlantController::class, 'show'])->name('plant-detail');
+    Route::get('plants/{plant}/photos/', [PlantPhotoController::class, 'index'])->name('plant-photos-list');
+
     Route::post('plants/', [PlantController::class, 'store']);
     Route::put('plants/{plant}/', [PlantController::class, 'update']);
     Route::delete('plants/{plant}/', [PlantController::class, 'destroy']);

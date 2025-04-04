@@ -18,6 +18,7 @@ class PlantResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'user_id' => $this->user_id,
             'variety' => $this->variety,
             'plant_type' => $this->plant_type,
             'purchase_date' => $this->purchase_date,

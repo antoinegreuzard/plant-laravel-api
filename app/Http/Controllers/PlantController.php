@@ -13,9 +13,11 @@ class PlantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $plants = Plant::orderByDesc('created_at')->paginate(10);
+        $plants = Plant::where('user_id', $request->user()->id)
+            ->orderByDesc('created_at')
+            ->paginate(10);
 
         return response()->json([
             'count' => $plants->total(),
@@ -36,6 +38,8 @@ class PlantController extends Controller
             // Ajoute ici les autres champs si besoin
         ]);
 
+        $validated['user_id'] = $request->user()->id;
+
         $plant = Plant::create($validated);
         return new PlantResource($plant);
     }
@@ -43,8 +47,12 @@ class PlantController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Plant $plant): PlantResource
+    public function show(Request $request, Plant $plant): PlantResource
     {
+        if ($request->user()->id !== $plant->user_id) {
+            abort(403, 'Non autorisé');
+        }
+
         return new PlantResource($plant);
     }
 
@@ -53,6 +61,10 @@ class PlantController extends Controller
      */
     public function update(Request $request, Plant $plant): PlantResource
     {
+        if ($request->user()->id !== $plant->user_id) {
+            abort(403, 'Non autorisé');
+        }
+
         $plant->update($request->all());
         return new PlantResource($plant);
     }
@@ -60,8 +72,12 @@ class PlantController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Plant $plant): Response
+    public function destroy(Request $request, Plant $plant): Response
     {
+        if ($request->user()->id !== $plant->user_id) {
+            abort(403, 'Non autorisé');
+        }
+
         $plant->delete();
         return response()->noContent();
     }

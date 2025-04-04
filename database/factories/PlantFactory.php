@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Plant;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -23,6 +24,7 @@ class PlantFactory extends Factory
         $lastPruning = fake()->optional()->dateTimeBetween('-6 months');
 
         return [
+            'user_id' => User::factory(),
             'name' => fake()->unique()->words(2, true),
             'variety' => fake()->optional()->word(),
             'plant_type' => fake()->randomElement(['indoor', 'outdoor', 'succulent', 'flower', 'tree']),
