@@ -1,11 +1,14 @@
 <?php
 
 use App\Models\Plant;
+use App\Models\User;
 
 it('lists paginated plants', function () {
-    Plant::factory()->count(7)->create();
+    $user = User::factory()->create();
 
-    $response = $this->get('/api/plants');
+    Plant::factory()->count(7)->for($user)->create();
+
+    $response = $this->actingAs($user, 'api')->getJson('/api/plants');
 
     $response->assertOk();
     $response->assertJsonStructure([
